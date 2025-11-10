@@ -63,20 +63,20 @@ def edit_hotel(hotel_id: int, hotel_data: Hotel):
     summary="Частичное обновление данных об отеле",
     description="<h1>Тут мы частично обновляем данные об отеле: можно отправить name, а можно title</h1>",
 )
-def partially_edit_hotel(
-        hotel_id: int, hotel_data: HotelPATCH,
+async def partially_edit_hotel(
+        hotel_id: int,
+        hotel_data: HotelPATCH,
 ):
-    global hotels
-    hotel = [hotel for hotel in hotels if hotel["id"] == hotel_id][0]
-    if hotel_data.title:
-        hotel["title"] = hotel_data.title
-    if hotel_data.name:
-        hotel["name"] = hotel_data.name
+    async with async_session_maker() as session:
+        hotel = await HotelsRepository(session).edit(data=hotel_data, pk=hotel_id)
+        await session.commit()
     return {"status": "OK"}
 
 
 @router.delete("/{hotel_id}")
-def delete_hotel(hotel_id: int):
-    global hotels
-    hotels = [hotel for hotel in hotels if hotel["id"] != hotel_id]
-    return {"status": "OK"}
+async def delete_hotel(hotel_id: int):
+    async with async_session_maker() as session:
+        hotel = await HotelsRepository(session).delete(hotel_id)
+        await session.commit()
+        return {"status": "OK"}
+

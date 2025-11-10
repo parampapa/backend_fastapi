@@ -9,3 +9,5 @@ class Hotel(BaseModel):
 class HotelPATCH(BaseModel):
     title: str | None = Field(None)
     location: str | None = Field(None)
+
+
