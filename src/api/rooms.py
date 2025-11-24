@@ -1,0 +1,94 @@
+from fastapi import APIRouter, Body
+
+from src.database import async_session_maker, engine
+from src.repositories.hotels import HotelsRepository
+from src.repositories.rooms import RoomsRepository
+from src.schemas.rooms import RoomAdd, Room, RoomPATCH
+
+router = APIRouter(prefix="/hotels", tags=["Номера"])
+
+
+@router.get("/{rooms_id}")
+async def get_rooms(rooms_id: int):
+    async with async_session_maker() as session:
+        return await HotelsRepository(session).get_one_or_none(id=rooms_id)
+
+
+# @router.get("")
+# async def get_hotels(
+#         pagination: PaginationDep,
+#         location: str | None = Query(None, description="локация"),
+#         title: str | None = Query(None, description="Название отеля"),
+# ):
+#     per_page = pagination.per_page or 5
+#     async with (async_session_maker() as session):
+#         return await HotelsRepository(session).get_all(
+#             location=location,
+#             title=title,
+#             limit=per_page,
+#             offset=per_page * (pagination.page - 1),
+#         )
+
+@router.post("")
+async def create_rooms(room_data: RoomAdd = Body(openapi_examples={
+    "1": {
+        "summary": "Сочи",
+        "value": {
+            "hotel_id": "7",
+            "title": "2-x местный",
+            "price": "5000",
+            "quantity": "1",
+        }
+    },
+    "2": {
+        "summary": "Dubai",
+        "value": {
+            "title": "3-x местный",
+            "price": "5000",
+            "quantity": "1",
+        }
+    }
+
+
+})):
+    async with async_session_maker() as session:
+        await RoomsRepository(session).add(room_data)
+        await session.commit()
+    return {"status": "OK"}
+#
+#
+# @router.put("/{hotel_id}")
+# async def edit_hotel(
+#         hotel_id: int,
+#         hotel_data: HotelPATCH,
+# ):
+#     async with async_session_maker() as session:
+#         await HotelsRepository(session).edit(hotel_data,
+#                                              id=hotel_id)
+#         await session.commit()
+#     return {"status": "OK"}
+#
+#
+# @router.patch(
+#     "/{hotel_id}",
+#     summary="Частичное обновление данных об отеле",
+#     description="<h1>Тут мы частично обновляем данные об отеле: можно отправить name, а можно title</h1>",
+# )
+# async def partially_edit_hotel(
+#         hotel_id: int,
+#         hotel_data: HotelPATCH,
+# ):
+#     async with async_session_maker() as session:
+#         await HotelsRepository(session).edit(hotel_data,
+#                                              exclude_unset=True,
+#                                              id=hotel_id)
+#         await session.commit()
+#     return {"status": "OK"}
+#
+#
+# @router.delete("/{hotel_id}")
+# async def delete_hotel(hotel_id: int):
+#     async with async_session_maker() as session:
+#         await HotelsRepository(session).delete(id=hotel_id)
+#         await session.commit()
+#         return {"status": "OK"}
