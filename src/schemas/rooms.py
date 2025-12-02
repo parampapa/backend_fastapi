@@ -23,15 +23,15 @@ class Room(RoomAdd):
 
 
 class RoomPatchRequest(BaseModel):
-    title: str | None = Field(None)
-    description: str | None = Field(None)
-    price: int | None = Field(None)
-    quantity: int | None = Field(None)
+    title: str | None = None
+    description: str | None = None
+    price: int | None = None
+    quantity: int | None = None
 
 
 class RoomPatch(BaseModel):
-    hotel_id: int | None = Field(None)
-    title: str | None = Field(None)
-    description: str | None = Field(None)
-    price: int | None = Field(None)
-    quantity: int | None = Field(None)
+    hotel_id: int | None = None
+    title: str | None = None
+    description: str | None = None
+    price: int | None = None
+    quantity: int | None = None
